@@ -18,7 +18,7 @@ object HiveApp {
     spark.sql("select deptno, count(1) from emp group by deptno").show
 
     // 设置分区数量，默认200
-    spark.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
+//    spark.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
 
 //    spark.sql("select deptno, count(1) as mount from emp group by deptno").write.saveAsTable("dept_number")
 

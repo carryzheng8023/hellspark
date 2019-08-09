@@ -13,7 +13,7 @@ object SparkSQLThriftServerApp {
 
     Class.forName("org.apache.hive.jdbc.HiveDriver")
 
-    val conn = DriverManager.getConnection("jdbc:hive2://s.carryzheng.xin:10000", "zx", "")
+    val conn = DriverManager.getConnection("jdbc:hive2://hadoop01:10000", "zx", "")
     val ps = conn.prepareStatement("select empno, ename, sal from emp")
     val rs = ps.executeQuery()
     while (rs.next()){

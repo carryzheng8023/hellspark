@@ -13,6 +13,7 @@ object HiveOnSpark {
       .appName("hiveOnSpark").master("local[2]").getOrCreate()
 
 //    spark.sql("show databases").collect().foreach(println)
+    //idea运行需要将hive-site.xml添加到resources目录下
     spark.sql("select * from default.emp").show()
   }
 
