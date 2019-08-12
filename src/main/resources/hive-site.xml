@@ -68,7 +68,7 @@
 
 <property>
 	<name>hive.zookeeper.quorum</name>
-	<value>s.carryzheng.xin</value>
+	<value>hadoop01</value>
 	<description>The list of ZooKeeper servers to talk to. This is only needed for read/write locks.</description> 
 </property>
 
