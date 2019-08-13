@@ -11,7 +11,8 @@ import org.apache.spark.sql.SparkSession
 object HiveApp {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().appName("HiveApp").master("local[2]").getOrCreate()
+    val spark = SparkSession.builder().enableHiveSupport()
+      .appName("HiveApp").master("local[2]").getOrCreate()
 
     spark.table("emp").show
 

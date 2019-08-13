@@ -3,7 +3,7 @@ package xin.carryzheng.spark.sql
 import java.sql.DriverManager
 
 /**
-  *
+  * $SPARK_HOME/sbin/start-thriftserver.sh
   * @author zhengxin
   *         2019-08-07 17:03:15
   */
@@ -13,7 +13,7 @@ object SparkSQLThriftServerApp {
 
     Class.forName("org.apache.hive.jdbc.HiveDriver")
 
-    val conn = DriverManager.getConnection("jdbc:hive2://hadoop01:10000", "zx", "")
+    val conn = DriverManager.getConnection("jdbc:hive2://s.carryzheng.xin:10000", "zx", "")
     val ps = conn.prepareStatement("select empno, ename, sal from emp")
     val rs = ps.executeQuery()
     while (rs.next()){
