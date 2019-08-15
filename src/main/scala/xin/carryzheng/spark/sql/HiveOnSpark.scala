@@ -14,7 +14,10 @@ object HiveOnSpark {
 
 //    spark.sql("show databases").collect().foreach(println)
     //idea运行需要将hive-site.xml添加到resources目录下
-    spark.sql("select * from default.emp").show()
+    spark.table("tm").printSchema()
+    spark.table("tm").show
+//    spark.sql("select count(*) from default.test_user2019").show()
+//    spark.sql("select * from test_user2019a limit 20").show()
   }
 
 }
