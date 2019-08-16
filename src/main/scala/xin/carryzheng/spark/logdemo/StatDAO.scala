@@ -45,4 +45,41 @@ object StatDAO {
 
   }
 
+
+  def insertDayCityVideoAccessTopN(list: ListBuffer[DayCityVideoAccessStat]) = {
+    var connection: Connection = null
+    var ps: PreparedStatement = null
+
+    try {
+
+      connection = MySqlUtils.getConnection()
+
+      connection.setAutoCommit(false)
+
+      val sql = "insert into day_video_city_topn_stat(day, cms_id, city, times, times_rank) values (?,?,?,?,?)"
+
+      ps = connection.prepareStatement(sql)
+
+      for (ele <- list) {
+        ps.setString(1, ele.day)
+        ps.setLong(2, ele.cmsId)
+        ps.setString(3, ele.city)
+        ps.setLong(4, ele.times)
+        ps.setInt(5, ele.times_rank)
+
+        ps.addBatch()
+      }
+
+      ps.executeBatch()
+      connection.commit()
+
+
+    } catch {
+      case e: Exception => e.printStackTrace()
+    } finally {
+      MySqlUtils.release(connection, ps)
+    }
+
+  }
+
 }

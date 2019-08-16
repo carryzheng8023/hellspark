@@ -1,5 +1,6 @@
 package xin.carryzheng.spark.logdemo
 
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -24,12 +25,61 @@ object TopNStatJob {
     //    accessDF.printSchema()
     //    accessDF.show(false)
 
-    videoAccessTopNStat(spark, accessDF)
+    // 最受欢迎的TopN课程
+//    videoAccessTopNStat(spark, accessDF)
+
+    // 按照地市进行统计TopN课程
+    cityAccessTopNStat(spark, accessDF)
 
     spark.stop()
 
   }
 
+  def cityAccessTopNStat(spark: SparkSession, accessDF: DataFrame) = {
+
+    import spark.implicits._
+
+    val cityAccessTopNDF = accessDF.filter($"day" === "20190812" && $"cmsType" === "vedio")
+      .groupBy("day","city", "cmsId")
+      .agg(count("cmsId").as("times"))
+
+//    cityAccessTopNDF.show(false)
+
+    val top3DF = cityAccessTopNDF.select(
+      cityAccessTopNDF("day"),
+      cityAccessTopNDF("city"),
+      cityAccessTopNDF("cmsId"),
+      cityAccessTopNDF("times"),
+      row_number()
+        .over(Window.partitionBy(cityAccessTopNDF("city"))
+        .orderBy(cityAccessTopNDF("times").desc))
+        .as("times_rank")
+    ).filter("times_rank <= 3") //Top3
+
+
+    try {
+      top3DF.foreachPartition(partitionOfRecords => {
+        val list = new ListBuffer[DayCityVideoAccessStat]
+
+        partitionOfRecords.foreach(info => {
+          val day = info.getAs[String]("day")
+          val cmsId = info.getAs[Long]("cmsId")
+          val city = info.getAs[String]("city")
+          val times = info.getAs[Long]("times")
+          val timesRank = info.getAs[Int]("times_rank")
+
+          list.append(DayCityVideoAccessStat(day, cmsId, city, times, timesRank))
+        })
+
+        StatDAO.insertDayCityVideoAccessTopN(list)
+
+      })
+    } catch {
+      case e: Exception => e.printStackTrace()
+    }
+
+
+  }
 
   /**
     * 前topN
