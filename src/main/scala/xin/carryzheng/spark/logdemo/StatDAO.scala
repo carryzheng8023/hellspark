@@ -11,6 +11,42 @@ import scala.collection.mutable.ListBuffer
   */
 object StatDAO {
 
+
+  def insertDayVideoTrafficsAccessTopN(list: ListBuffer[DayVideoTrafficsStat]) = {
+    var connection: Connection = null
+    var ps: PreparedStatement = null
+
+    try {
+
+      connection = MySqlUtils.getConnection()
+
+      connection.setAutoCommit(false)
+
+      val sql = "insert into day_video_traffics_topn_stat(day, cms_id, traffics) values (?,?,?)"
+
+      ps = connection.prepareStatement(sql)
+
+      for (ele <- list) {
+        ps.setString(1, ele.day)
+        ps.setLong(2, ele.cmsId)
+        ps.setLong(3, ele.traffics)
+
+        ps.addBatch()
+      }
+
+      ps.executeBatch()
+      connection.commit()
+
+
+    } catch {
+      case e: Exception => e.printStackTrace()
+    } finally {
+      MySqlUtils.release(connection, ps)
+    }
+
+  }
+
+
   def insertDayVideoAccessTopN(list: ListBuffer[DayVideoAccessStat]) = {
     var connection: Connection = null
     var ps: PreparedStatement = null
