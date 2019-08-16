@@ -118,4 +118,33 @@ object StatDAO {
 
   }
 
+
+  def deleteData(day: String): Unit = {
+    val tables = Array(
+      "day_video_access_topn_stat",
+      "day_video_city_topn_stat",
+      "day_video_traffics_topn_stat"
+    )
+
+    var connection: Connection = null
+    var ps: PreparedStatement = null
+
+    try{
+
+      connection = MySqlUtils.getConnection()
+
+      for (table <- tables){
+        val deleteSQL = s"delete from $table where day = ?"
+        ps = connection.prepareStatement(deleteSQL)
+        ps.setString(1, day)
+        ps.executeUpdate()
+      }
+
+    }catch{
+      case e:Exception => e.printStackTrace()
+    }finally {
+      MySqlUtils.release(connection, ps)
+    }
+  }
+
 }
